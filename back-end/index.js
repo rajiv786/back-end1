@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const PDFDocument = require('pdfkit');
-const { htmlToText } = require('html-to-text');
+const pdf = require('html-pdf');
 
 const app = express();
 app.use(bodyParser.json());
@@ -93,21 +92,15 @@ app.post('/api/generate-pdf', async (req, res) => {
 `
 	const {  options } = req.body;
 	
-  const doc = new PDFDocument(options);
+  pdf.create(html, options).toStream((err, stream) => {
+    if (err) return res.sendStatus(500);
+    // Set the response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
 
-  // Set the response headers
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
-
-  // Pipe the PDF to the response
-  doc.pipe(res);
-
-  // Convert HTML to plain text and write to PDF
-  const text = htmlToText(html, { wordwrap: 130 });
-  doc.text(text);
-
-  // End the PDF stream
-  doc.end();
+    // Pipe the PDF to the response
+    stream.pipe(res);
+  });
 });
 
 // Start the server
