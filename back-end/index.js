@@ -1,40 +1,33 @@
 const express = require('express');
-const fs = require('fs');
-const pdf = require('html-pdf');
+const bodyParser = require('body-parser');
+const PDFDocument = require('pdfkit');
+const { htmlToText } = require('html-to-text');
 
 const app = express();
+app.use(bodyParser.json());
 
-// Define a route for the PDF generation API endpoint
-app.get('/generate-pdf', (req, res) => {
-  // Define the HTML content to convert (in this example, it's hard-coded)
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <title>HTML to PDF Example</title>
-      </head>
-      <body>
-        <h1>Hello, world!</h1>
-        <p>This is an example of converting HTML to PDF using html-pdf.</p>
-      </body>
-    </html>
-  `;
+app.post('/api/generate-pdf', async (req, res) => {
+	const html=`<h1>aaa</h1>`
+	const {  options } = req.body;
+	
+  const doc = new PDFDocument(options);
 
-  // Define the PDF file options
-  const options = {
-    format: 'Letter'
-  };
+  // Set the response headers
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
 
-  // Convert the HTML to PDF and stream the PDF to the response
-  pdf.create(htmlContent, options).toStream((err, pdfStream) => {
-    if (err) return res.sendStatus(500);
-    res.setHeader('Content-Type', 'application/pdf');
-    pdfStream.pipe(res);
-  });
+  // Pipe the PDF to the response
+  doc.pipe(res);
+
+  // Convert HTML to plain text and write to PDF
+  const text = htmlToText(html, { wordwrap: 130 });
+  doc.text(text);
+
+  // End the PDF stream
+  doc.end();
 });
 
 // Start the server
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log('Server listening on port 3000');
 });
