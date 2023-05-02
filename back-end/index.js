@@ -1,27 +1,40 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
-const cors = require('cors');
+const fs = require('fs');
+const pdf = require('html-pdf');
+
 const app = express();
 
-app.use(express.json());
-app.use(cors());
-app.post('/api/pdf', async (req, res) => {
-	console.log(req.body);
-	const html = `<h1>Rajiv ${req.body.html}`
-	console.log('html',html)
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.setContent(html);
-  const pdf = await page.pdf({ format: 'A4' });
-  await browser.close();
-  res.set({
-    'Content-Type': 'application/pdf',
-    'Content-Disposition': 'attachment; filename="file.pdf"',
-    'Content-Length': pdf.length,
+// Define a route for the PDF generation API endpoint
+app.get('/generate-pdf', (req, res) => {
+  // Define the HTML content to convert (in this example, it's hard-coded)
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>HTML to PDF Example</title>
+      </head>
+      <body>
+        <h1>Hello, world!</h1>
+        <p>This is an example of converting HTML to PDF using html-pdf.</p>
+      </body>
+    </html>
+  `;
+
+  // Define the PDF file options
+  const options = {
+    format: 'Letter'
+  };
+
+  // Convert the HTML to PDF and stream the PDF to the response
+  pdf.create(htmlContent, options).toStream((err, pdfStream) => {
+    if (err) return res.sendStatus(500);
+    res.setHeader('Content-Type', 'application/pdf');
+    pdfStream.pipe(res);
   });
-	console.log(pdf);
-  res.send(pdf);
 });
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// Start the server
+app.listen(3000, () => {
+  console.log('Server listening on port 3000');
+});
