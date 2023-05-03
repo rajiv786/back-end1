@@ -2,9 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const PDFDocument = require('pdfkit');
 const { htmlToText } = require('html-to-text');
+const cors = require('cors');
 const app = express();
 app.use(bodyParser.json());
-
+app.use(cors({}));
 app.post('/api/generate-pdf', async (req, res) => {
   const { options } = req.body;
 
