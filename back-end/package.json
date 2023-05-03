@@ -21,6 +21,7 @@
     "pdfkit": "^0.13.0",
     "pdfmake": "^0.1.72",
     "puppeteer": "^19.11.1",
+    "cors": "^2.8.5",
     "wkhtmltopdf": "^0.4.0"
   }
 }
