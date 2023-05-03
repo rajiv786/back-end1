@@ -23,7 +23,7 @@ app.post('/api/generate-pdf', async (req, res) => {
   doc.moveDown(2);
   doc.fontSize(16).text('Given on: [DATE]', { align: 'left' });
   doc.fontSize(16).text('Given on: [DATE]', { align: 'center' });
-  doc.fontSize(16).text('[SIGNATURE]', { align: 'right' });
+  doc.fontSize(16).text('[SIGNATUE]', { align: 'right' });
   // End the PDF stream
   doc.end();
 });
