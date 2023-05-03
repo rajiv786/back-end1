@@ -1,12 +1,41 @@
+// Required packages
 const express = require('express');
-const bodyParser = require('body-parser');
-const pdf = require('html-pdf');
+const pdf = require('pdf-creator-node');
+const fs = require('fs');
 
+// Define app
 const app = express();
-app.use(bodyParser.json());
 
-app.post('/api/generate-pdf', async (req, res) => {
-	const html=`<!DOCTYPE html>
+// Define HTML template
+const html = fs.readFileSync('./template.html', 'utf8');
+
+// Define options
+const options = {
+    format: "A4",
+    orientation: "portrait",
+    border: "10mm"
+};
+
+// Define PDF document
+const document = {
+    html: html,
+    data: {
+        name: "John Doe",
+        age: 28,
+        gender: "Male"
+    },
+    path: "./output.pdf"
+};
+
+// Define route for generating PDF file
+app.get('/generate-pdf', (req, res) => {
+    // Create PDF
+    // Required package
+var pdf = require("pdf-creator-node");
+var fs = require('fs')
+
+// Define HTML template
+var html = `<!DOCTYPE html>
 <html>
 <head>
 	<title>Certificate of Completion</title>
@@ -88,22 +117,39 @@ app.post('/api/generate-pdf', async (req, res) => {
 		</div>
 	</div>
 </body>
-</html>
-`
-	const {  options } = req.body;
-	
-  pdf.create(html, options).toStream((err, stream) => {
-    if (err) return res.sendStatus(500);
-    // Set the response headers
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="output.pdf"');
+</html>`;
 
-    // Pipe the PDF to the response
-    stream.pipe(res);
-  });
+// Define options
+var options = {
+    format: "A4",
+    orientation: "portrait",
+    border: "10mm"
+};
+
+// Define PDF document
+var document = {
+    html: html,
+    data: {
+        name: "John Doe",
+        age: 28,
+        gender: "Male"
+    },
+    path: "./output.pdf"
+};
+
+// Create PDF
+pdf.create(document, options)
+    .then(file => {
+        // Send PDF file back to front-end
+        res.sendFile(file.filename);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(500).send(error);
+    });
 });
 
-// Start the server
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Server listening on port 3000');
+// Start server
+app.listen(process.env.PORT || 5000, () => {
+    console.log(`Server started on port ${process.env.PORT || 5000}`);
 });
