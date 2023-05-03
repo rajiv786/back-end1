@@ -17,6 +17,7 @@
     "html-pdf-node": "^1.0.8",
     "html-to-pdf": "^0.1.11",
     "html-to-text": "^9.0.5",
+    "pdf-creator-node": "^2.3.5",
     "pdfkit": "^0.13.0",
     "pdfmake": "^0.1.72",
     "puppeteer": "^19.11.1"
