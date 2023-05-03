@@ -7,25 +7,6 @@ const fs = require('fs');
 const app = express();
 
 // Define HTML template
-const html = fs.readFileSync('./template.html', 'utf8');
-
-// Define options
-const options = {
-    format: "A4",
-    orientation: "portrait",
-    border: "10mm"
-};
-
-// Define PDF document
-const document = {
-    html: html,
-    data: {
-        name: "John Doe",
-        age: 28,
-        gender: "Male"
-    },
-    path: "./output.pdf"
-};
 
 // Define route for generating PDF file
 app.get('/generate-pdf', (req, res) => {
