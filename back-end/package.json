@@ -20,6 +20,7 @@
     "pdf-creator-node": "^2.3.5",
     "pdfkit": "^0.13.0",
     "pdfmake": "^0.1.72",
-    "puppeteer": "^19.11.1"
+    "puppeteer": "^19.11.1",
+    "wkhtmltopdf": "^0.4.0"
   }
 }
